@@ -3,22 +3,26 @@
 
 class GraphNode;
 
+enum class GraphPortType
+{
+    Integer,
+    Float
+};
+
 class GraphNodeSlot : public QGraphicsItem
 {
 public:
-    enum class Type
+    enum class IOType
     {
-        Integer,
-        Float
+        Input,
+        Output
     };
 
-    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Type type, int index);
+    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index);
 
     void UpdatePosition();
 
     QRectF boundingRect() const override;
-
-    Type GetType() const { return mType; }
 
 protected:
 
@@ -30,8 +34,9 @@ protected:
 
 private:
 
-    GraphNode&  mParentNode;
+    GraphNode&          mParentNode;
 
-    const Type  mType;
-    const int   mIndex;
+    const GraphPortType mDataType;
+    const IOType        mIOType;
+    const int           mIndex;
 };

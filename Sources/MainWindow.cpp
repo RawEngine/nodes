@@ -10,13 +10,10 @@
 #include "Headers/GraphNodeSlot.hpp" // TEMP?
 #include "Headers/GraphGizmo.hpp"   // TEMP?
 
-// TEMP?
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QFile>
-
-#include <QMessageBox> // TEMP.
 
 constexpr auto NodesFileName = "nodes.json";
 
@@ -41,8 +38,8 @@ MainWindow::MainWindow()
         auto pNodeB = this->AddNode("Test B", QPointF(100, 150));
 
         // TEMP.
-        auto pNodeSlotA = pNodeA->mInputSlots.at(0);
-        auto pNodeSlotB = pNodeB->mInputSlots.at(1);
+        auto pNodeSlotA = pNodeA->mInputPorts.at(0);
+        auto pNodeSlotB = pNodeB->mInputPorts.at(1);
 
         auto pTestGizmo = new GraphGizmo(pNodeSlotA, pNodeSlotB);
         mpScene->addItem(pTestGizmo);
@@ -148,6 +145,9 @@ void MainWindow::Slot_BtnAddNode()
 
     if (dialog.exec() == QDialog::Accepted)
     {
-        this->AddNode(dialog.GetNodeName(), QPointF(0.0, 0.0));
+        int numInputs = dialog.GetNumInputs();
+        int numOutputs = dialog.GetNumOutputs();
+
+        auto pNode = this->AddNode(dialog.GetNodeName(), QPointF(0.0, 0.0));
     }
 }

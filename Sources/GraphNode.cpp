@@ -6,6 +6,7 @@
 
 GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition)
     : QGraphicsItem()
+    , mScene(rScene)
     , mName(rName)
 {
     rScene.addItem(this);
@@ -20,10 +21,27 @@ GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF
 
     QGraphicsItem::setGraphicsEffect(&mShadowEffect);
 
-    //-----------------------------------------------
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Integer, 0));
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Float, 1));
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Integer, 2));
+    // TEMP.
+    this->AddInputPort(GraphPortType::Integer);
+    this->AddInputPort(GraphPortType::Float);
+    this->AddInputPort(GraphPortType::Integer);
+
+    this->AddOutputPort(GraphPortType::Float);
+    this->AddOutputPort(GraphPortType::Integer);
+}
+
+void GraphNode::AddInputPort(GraphPortType type)
+{
+    const int index = mInputPorts.size();
+
+    mInputPorts.append(new GraphNodeSlot(mScene, *this, type, GraphNodeSlot::IOType::Input, index));
+}
+
+void GraphNode::AddOutputPort(GraphPortType type)
+{
+    const int index = mOutputPorts.size();
+
+    mOutputPorts.append(new GraphNodeSlot(mScene, *this, type, GraphNodeSlot::IOType::Output, index));
 }
 
 QRectF GraphNode::boundingRect() const
@@ -56,8 +74,11 @@ void GraphNode::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mouseMoveEvent(pEvent);
 
-    for (auto pSlot : mInputSlots)
-        pSlot->UpdatePosition();
+    for (auto pInputPort : mInputPorts)
+        pInputPort->UpdatePosition();
+
+    for (auto pOutputPort : mOutputPorts)
+        pOutputPort->UpdatePosition();
 }
 
 void GraphNode::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)

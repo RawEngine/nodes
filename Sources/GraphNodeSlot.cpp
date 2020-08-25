@@ -4,10 +4,11 @@
 #include "Headers/GraphNode.hpp"
 #include "Headers/GraphNodeSlot.hpp"
 
-GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Type type, int index)
+GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index)
     : QGraphicsItem()
     , mParentNode(rParentNode)
-    , mType(type)
+    , mDataType(dataType)
+    , mIOType(ioType)
     , mIndex(index)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
@@ -22,9 +23,15 @@ void GraphNodeSlot::UpdatePosition()
     const int topDistance = 20;
     const int dapDistance = 20;
 
-    QGraphicsItem::setPos(
-                mParentNode.pos().x() + mParentNode.boundingRect().right(),
-                mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + (dapDistance * mIndex));
+    qreal posX = mParentNode.pos().x();
+    qreal posY = mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + (dapDistance * mIndex);
+
+    if (mIOType == IOType::Input)
+        posX += mParentNode.boundingRect().left();
+    else
+        posX += mParentNode.boundingRect().right();
+
+    QGraphicsItem::setPos(posX, posY);
 }
 
 QRectF GraphNodeSlot::boundingRect() const
@@ -35,7 +42,7 @@ QRectF GraphNodeSlot::boundingRect() const
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /* = nullptr */)
 {
 //  pPainter->setPen(Qt::black); // Looks prettier without the border?
-    pPainter->setBrush(mType == Type::Integer ? Qt::green : Qt::red);
+    pPainter->setBrush(mDataType == GraphPortType::Integer ? Qt::green : Qt::red);
     pPainter->drawEllipse(this->boundingRect());
 }
 

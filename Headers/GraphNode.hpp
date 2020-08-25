@@ -1,12 +1,17 @@
 
 #pragma once
 
+// Forwward declarations.
+enum class GraphPortType;
 class GraphNodeSlot;
 
 class GraphNode : public QGraphicsItem
 {
 public:
     GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition);
+
+    void AddInputPort(GraphPortType type);
+    void AddOutputPort(GraphPortType type);
 
     QRectF boundingRect() const override;
 
@@ -27,11 +32,14 @@ private:
     static constexpr auto BorderColorDefault = QColor(9, 9, 9);
     static constexpr auto BorderColorSelected = QColor(39, 214, 45);
 
+    QGraphicsScene& mScene;
+
     const QString mName;
 
     QGraphicsDropShadowEffect mShadowEffect;
 
 public: // TEMP!
 
-    QVector<GraphNodeSlot*> mInputSlots;
+    QVector<GraphNodeSlot*> mInputPorts;
+    QVector<GraphNodeSlot*> mOutputPorts;
 };
