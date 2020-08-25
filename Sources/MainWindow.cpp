@@ -16,6 +16,8 @@
 #include <QJsonArray>
 #include <QFile>
 
+#include <QMessageBox> // TEMP.
+
 constexpr auto NodesFileName = "nodes.json";
 
 MainWindow::MainWindow()
@@ -146,6 +148,6 @@ void MainWindow::Slot_BtnAddNode()
 
     if (dialog.exec() == QDialog::Accepted)
     {
-        // TODO: Create the new dialog.
+        this->AddNode(dialog.GetNodeName(), QPointF(0.0, 0.0));
     }
 }

@@ -15,3 +15,18 @@ NodeDialog::NodeDialog()
 
     QDialog::setWindowFlags(flags);
 }
+
+QString NodeDialog::GetNodeName() const
+{
+    return mUI.editName->text();
+}
+
+int NodeDialog::GetNumInputs() const
+{
+    return mUI.spinNumInputs->value();
+}
+
+int NodeDialog::GetNumOutputs() const
+{
+    return mUI.spinNumOutputs->value();
+}

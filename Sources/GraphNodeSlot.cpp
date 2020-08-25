@@ -32,7 +32,7 @@ QRectF GraphNodeSlot::boundingRect() const
     return {-5.0, -5.0, 10.0, 10.0};
 }
 
-void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /*= nullptr*/)
+void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /* = nullptr */)
 {
 //  pPainter->setPen(Qt::black); // Looks prettier without the border?
     pPainter->setBrush(mType == Type::Integer ? Qt::green : Qt::red);
