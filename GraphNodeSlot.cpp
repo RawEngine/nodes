@@ -4,9 +4,10 @@
 #include "GraphNode.hpp"
 #include "GraphNodeSlot.hpp"
 
-GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, int index)
+GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Type type, int index)
     : QGraphicsItem()
     , mParentNode(rParentNode)
+    , mType(type)
     , mIndex(index)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
@@ -33,8 +34,8 @@ QRectF GraphNodeSlot::boundingRect() const
 
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /*= nullptr*/)
 {
-    pPainter->setPen(Qt::black);
-    pPainter->setBrush(Qt::green);
+//  pPainter->setPen(Qt::black); // Looks prettier without the border?
+    pPainter->setBrush(mType == Type::Integer ? Qt::green : Qt::red);
     pPainter->drawEllipse(this->boundingRect());
 }
 

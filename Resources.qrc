@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/nodes">
+        <file alias="NodesIcon">icon.png</file>
+    </qresource>
+</RCC>

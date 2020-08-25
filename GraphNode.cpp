@@ -21,9 +21,9 @@ GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF
     QGraphicsItem::setGraphicsEffect(&mShadowEffect);
 
     //-----------------------------------------------
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, 0));
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, 1));
-    mInputSlots.append(new GraphNodeSlot(rScene, *this, 2));
+    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Integer, 0));
+    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Float, 1));
+    mInputSlots.append(new GraphNodeSlot(rScene, *this, GraphNodeSlot::Type::Integer, 2));
 }
 
 QRectF GraphNode::boundingRect() const

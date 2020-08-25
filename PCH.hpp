@@ -1,6 +1,8 @@
 #ifndef PCH_HPP
 #define PCH_HPP
 
+#include <QDialog>
+
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsItem>

@@ -6,11 +6,19 @@ class GraphNode;
 class GraphNodeSlot : public QGraphicsItem
 {
 public:
-    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, int index);
+    enum class Type
+    {
+        Integer,
+        Float
+    };
+
+    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Type type, int index);
 
     void UpdatePosition();
 
     QRectF boundingRect() const override;
+
+    Type GetType() const { return mType; }
 
 protected:
 
@@ -22,7 +30,8 @@ protected:
 
 private:
 
-    GraphNode& mParentNode;
+    GraphNode&  mParentNode;
 
-    const int mIndex;
+    const Type  mType;
+    const int   mIndex;
 };

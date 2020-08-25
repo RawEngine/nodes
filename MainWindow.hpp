@@ -19,6 +19,10 @@ private:
     bool ReadConfigs(bool& rIsMaximized);
     void WriteConfigs();
 
+private Q_SLOTS:
+
+    void Slot_BtnAddNode();
+
 private:   
 
     Ui::MainWindow mUI;

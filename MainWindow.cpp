@@ -4,6 +4,8 @@
 #include <QMainWindow>
 
 #include "MainWindow.hpp"
+#include "NodeDialog.hpp"
+
 #include "GraphNode.hpp"
 #include "GraphNodeSlot.hpp" // TEMP?
 #include "GraphGizmo.hpp"   // TEMP?
@@ -135,5 +137,15 @@ void MainWindow::WriteConfigs()
 
     //  file.write(jsonDocument.toBinaryData());
         file.write(jsonDocument.toJson(/*QJsonDocument::Compact*/));
+    }
+}
+
+void MainWindow::Slot_BtnAddNode()
+{
+    NodeDialog dialog;
+
+    if (dialog.exec() == QDialog::Accepted)
+    {
+        // TODO: Create the new dialog.
     }
 }

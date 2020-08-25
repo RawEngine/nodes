@@ -13,8 +13,19 @@
   <property name="windowTitle">
    <string>Nodes</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="Resources.qrc">
+    <normaloff>:/nodes/NodesIcon</normaloff>:/nodes/NodesIcon</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QPushButton" name="btnAddNode">
+      <property name="text">
+       <string>Add Node</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="GraphView" name="graphicsView"/>
     </item>
@@ -29,6 +40,28 @@
    <header>GraphView.hpp</header>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>btnAddNode</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>Slot_BtnAddNode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>199</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>199</x>
+     <y>149</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>Slot_BtnAddNode()</slot>
+ </slots>
 </ui>

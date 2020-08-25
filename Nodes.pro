@@ -30,6 +30,7 @@ PRECOMPILED_HEADER = PCH.hpp
 SOURCES += \
     GraphGizmo.cpp \
     GraphView.cpp \
+    NodeDialog.cpp \
 		PCH.hpp \
         GraphNode.cpp \
         GraphNodeSlot.cpp \
@@ -42,12 +43,17 @@ HEADERS += \
         GraphNodeSlot.hpp \
         GraphView.hpp \
         MainWindow.hpp \
+        NodeDialog.hpp \
         PCH.hpp
 
 FORMS += \
-        MainWindow.ui
+        MainWindow.ui \
+        NodeDialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    Resources.qrc
