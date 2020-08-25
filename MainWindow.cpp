@@ -1,6 +1,7 @@
 
+#include "PCH.hpp"
+
 #include <QMainWindow>
-#include <QGraphicsScene>
 
 #include "MainWindow.hpp"
 #include "GraphNode.hpp"
@@ -15,7 +16,8 @@ MainWindow::MainWindow()
     mUI.graphicsView->setRenderHints(QPainter::Antialiasing);
 
     // TEST.
-    mpScene->addItem(new GraphNode("Test"));
+    auto pGraphNode = new GraphNode(*mpScene, "Test");
+
 }
 
 MainWindow::~MainWindow()

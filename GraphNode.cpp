@@ -1,14 +1,30 @@
 
+#include "PCH.hpp"
+
 #include "GraphNode.hpp"
+#include "GraphNodeSlot.hpp"
 
 #include <QBrush>
 #include <QPainter>
 
-GraphNode::GraphNode(const QString& rName)
+GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName)
     : QGraphicsItem()
     , mName(rName)
 {
+    rScene.addItem(this);
+
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
+
+
+    // Drop some shadow.
+    mShadowEffect.setBlurRadius(18);
+    mShadowEffect.setXOffset(0.0);
+    mShadowEffect.setYOffset(6.0);
+
+    QGraphicsItem::setGraphicsEffect(&mShadowEffect);
+
+    //-----------------------------------------------
+    mInputSlots.append(new GraphNodeSlot(rScene));
 }
 
 QRectF GraphNode::boundingRect() const
@@ -19,13 +35,16 @@ QRectF GraphNode::boundingRect() const
 void GraphNode::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /*= nullptr*/)
 {
     QRectF rect(this->boundingRect());
-    QBrush brush(Qt::green);
 
-    if (mIsSelected)
-        brush.setColor(Qt::red);
+    QBrush brush(Qt::white);
 
+    pPainter->setBrush(brush);
     pPainter->fillRect(rect, brush);
+
+    // Draw the border.
+    pPainter->setPen(mIsSelected ? Qt::red : Qt::green);
     pPainter->drawRect(rect);
+
 }
 
 void GraphNode::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)

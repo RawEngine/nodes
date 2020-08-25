@@ -24,14 +24,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+# Use Precompiled headers (PCH)
+PRECOMPILED_HEADER = PCH.hpp
+
 SOURCES += \
+		PCH.hpp \
         GraphNode.cpp \
+        GraphNodeSlot.cpp \
         Main.cpp \
         MainWindow.cpp
 
 HEADERS += \
         GraphNode.hpp \
-        MainWindow.hpp
+        GraphNodeSlot.hpp \
+        MainWindow.hpp \
+        PCH.hpp
 
 FORMS += \
         MainWindow.ui

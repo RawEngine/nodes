@@ -1,12 +1,11 @@
 
 #pragma once
 
-class GraphNodeSlot;
-
-class GraphNode : public QGraphicsItem
+class GraphNodeSlot : public QGraphicsItem
 {
 public:
-    GraphNode(QGraphicsScene& rScene, const QString& rName);
+    GraphNodeSlot(QGraphicsScene& rScene);
+    ~GraphNodeSlot();
 
 protected:
 
@@ -19,12 +18,4 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent) override;
 
 private:
-
-    const QString& mName;
-
-    bool mIsSelected = false;
-
-    QGraphicsDropShadowEffect mShadowEffect;
-
-    QVector<GraphNodeSlot*> mInputSlots;
 };
