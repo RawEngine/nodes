@@ -6,9 +6,11 @@ class GraphNodeSlot;
 class GraphNode : public QGraphicsItem
 {
 public:
-    GraphNode(QGraphicsScene& rScene, const QString& rName);
+    GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition);
 
     QRectF boundingRect() const override;
+
+    const QString& GetName() const { return mName; }
 
 protected:
 

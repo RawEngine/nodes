@@ -12,13 +12,18 @@ GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, int
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
 
     rScene.addItem(this);
+
+    this->UpdatePosition();
 }
 
 void GraphNodeSlot::UpdatePosition()
 {
+    const int topDistance = 20;
+    const int dapDistance = 20;
+
     QGraphicsItem::setPos(
                 mParentNode.pos().x() + mParentNode.boundingRect().right(),
-                mParentNode.pos().y() + mParentNode.boundingRect().top() + 20 * mIndex);
+                mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + (dapDistance * mIndex));
 }
 
 QRectF GraphNodeSlot::boundingRect() const

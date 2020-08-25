@@ -4,13 +4,14 @@
 #include "GraphNode.hpp"
 #include "GraphNodeSlot.hpp"
 
-GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName)
+GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition)
     : QGraphicsItem()
     , mName(rName)
 {
     rScene.addItem(this);
 
     QGraphicsItem::setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    QGraphicsItem::setPos(rPosition);
 
     // Drop some shadow.
     mShadowEffect.setBlurRadius(18);
