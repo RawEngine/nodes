@@ -1,15 +1,18 @@
 
 #pragma once
 
+class GraphNode;
+
 class GraphNodeSlot : public QGraphicsItem
 {
 public:
-    GraphNodeSlot(QGraphicsScene& rScene);
-    ~GraphNodeSlot();
+    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, int index);
 
-protected:
+    void UpdatePosition();
 
     QRectF boundingRect() const override;
+
+protected:
 
     void paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget = nullptr) override;
 
@@ -18,4 +21,8 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent) override;
 
 private:
+
+    GraphNode& mParentNode;
+
+    const int mIndex;
 };

@@ -1,32 +1,36 @@
 
 #include "PCH.hpp"
 
+#include "GraphNode.hpp"
 #include "GraphNodeSlot.hpp"
 
-#include <QBrush>
-#include <QPainter>
-
-GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene)
+GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, int index)
     : QGraphicsItem()
+    , mParentNode(rParentNode)
+    , mIndex(index)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
 
     rScene.addItem(this);
 }
 
-GraphNodeSlot::~GraphNodeSlot()
-{ }
+void GraphNodeSlot::UpdatePosition()
+{
+    QGraphicsItem::setPos(
+                mParentNode.pos().x() + mParentNode.boundingRect().right(),
+                mParentNode.pos().y() + mParentNode.boundingRect().top() + 20 * mIndex);
+}
 
 QRectF GraphNodeSlot::boundingRect() const
 {
-    return {0.f, 0.f, 100.f, 100.f};
+    return {-5.0, -5.0, 10.0, 10.0};
 }
 
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /*= nullptr*/)
 {
     pPainter->setPen(Qt::black);
     pPainter->setBrush(Qt::green);
-    pPainter->drawEllipse(-5, -5, 10, 10);
+    pPainter->drawEllipse(this->boundingRect());
 }
 
 void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)

@@ -8,9 +8,9 @@ class GraphNode : public QGraphicsItem
 public:
     GraphNode(QGraphicsScene& rScene, const QString& rName);
 
-protected:
-
     QRectF boundingRect() const override;
+
+protected:
 
     void paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget = nullptr) override;
 
@@ -25,9 +25,6 @@ private:
     static constexpr auto BorderColorSelected = QColor(39, 214, 45);
 
     const QString mName;
-
-
-    bool mIsSelected = false;
 
     QGraphicsDropShadowEffect mShadowEffect;
 
