@@ -24,58 +24,82 @@ MainWindow::MainWindow()
     mUI.graphicsView->setRenderHints(QPainter::Antialiasing);
     mUI.graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
+    // Show main application window as "maximized" by default.
+    bool isMaximized = true;
 
-    //--------------------------------------------------
-    // TEMP location..
+    // Try and read some configs from the Json file if it's available.
+    // Else, create the "default/initial" scene.
+    if (!this->ReadConfigs(isMaximized))
     {
-        QFile file(NodesFileName);
-
-        if (file.open(QIODevice::ReadOnly))
-        {
-            const auto fileData(file.readAll());
-
-            QJsonDocument jsonDocument(QJsonDocument::fromJson(fileData));
-
-            auto jsonScene = jsonDocument.object();
-
-            QJsonArray jsonNodes = jsonScene["nodes"].toArray();
-
-            for (const auto& rJsonNode : jsonNodes)
-            {
-                const auto& rJsonNodeObject = rJsonNode.toObject();
-
-                QString nodeName;
-                QPointF nodePosition;
-
-                if (!rJsonNodeObject["name"].isUndefined())
-                    nodeName = rJsonNodeObject["name"].toString();
-
-                if (!rJsonNodeObject["position"].isUndefined())
-                {
-                    const auto list(rJsonNodeObject["position"].toString().split(", "));
-                    nodePosition.setX(list.at(0).toDouble());
-                    nodePosition.setY(list.at(1).toDouble());
-                }
-
-                this->AddNode(nodeName, nodePosition);
-            }
-        }
-        else
-        {
-            // TEST.
-            this->AddNode("Test A", QPointF(-200, -200));
-            this->AddNode("Test B", QPointF(100, 150));
-        }
+        this->AddNode("Test A", QPointF(-200, -200));
+        this->AddNode("Test B", QPointF(100, 150));
     }
+
+    // Show the main window maximized (or not) depending on saved configurations.
+    isMaximized ? QMainWindow::showMaximized() : QMainWindow::show();
 }
 
 MainWindow::~MainWindow()
+{
+    this->WriteConfigs();
+}
+
+void MainWindow::AddNode(const QString& rName, const QPointF& rPosition)
+{
+    mGraphNodes.append(new GraphNode(*mpScene, rName, rPosition));
+}
+
+bool MainWindow::ReadConfigs(bool& rIsMaximized)
+{
+    QFile file(NodesFileName);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
+
+    const auto fileData(file.readAll());
+
+    QJsonDocument jsonDocument(QJsonDocument::fromJson(fileData));
+
+    auto jsonScene = jsonDocument.object();
+
+    if (!jsonScene["maximized"].isUndefined())
+        rIsMaximized = jsonScene["maximized"].toBool();
+
+    QJsonArray jsonNodes = jsonScene["nodes"].toArray();
+
+    for (const auto& rJsonNode : jsonNodes)
+    {
+        const auto& rJsonNodeObject = rJsonNode.toObject();
+
+        QString nodeName;
+        QPointF nodePosition;
+
+        if (!rJsonNodeObject["name"].isUndefined())
+            nodeName = rJsonNodeObject["name"].toString();
+
+        if (!rJsonNodeObject["position"].isUndefined())
+        {
+            const auto list(rJsonNodeObject["position"].toString().split(", "));
+            nodePosition.setX(list.at(0).toDouble());
+            nodePosition.setY(list.at(1).toDouble());
+        }
+
+        this->AddNode(nodeName, nodePosition);
+    }
+
+    return true;
+}
+
+void MainWindow::WriteConfigs()
 {
     QFile file(NodesFileName);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QJsonObject jsonScene;
+
+        jsonScene["maximized"] = QMainWindow::isMaximized();
+
         {
             QJsonArray jsonNodes;
 
@@ -99,9 +123,4 @@ MainWindow::~MainWindow()
     //  file.write(jsonDocument.toBinaryData());
         file.write(jsonDocument.toJson(/*QJsonDocument::Compact*/));
     }
-}
-
-void MainWindow::AddNode(const QString& rName, const QPointF& rPosition)
-{
-    mGraphNodes.append(new GraphNode(*mpScene, rName, rPosition));
 }

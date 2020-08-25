@@ -14,7 +14,13 @@ public:
 
     void AddNode(const QString& rName, const QPointF& rPosition);
 
+private:
+
+    bool ReadConfigs(bool& rIsMaximized);
+    void WriteConfigs();
+
 private:   
+
     Ui::MainWindow mUI;
 
     QGraphicsScene* mpScene;
