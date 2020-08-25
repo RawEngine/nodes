@@ -1,5 +1,5 @@
 
-#include "MainWindow.hpp"
+#include "Headers/MainWindow.hpp"
 
 #include <QApplication>
 

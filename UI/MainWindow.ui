@@ -14,7 +14,7 @@
    <string>Nodes</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="Resources.qrc">
+   <iconset resource="../Resources/Resources.qrc">
     <normaloff>:/nodes/NodesIcon</normaloff>:/nodes/NodesIcon</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -41,7 +41,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Resources.qrc"/>
+  <include location="../Resources/Resources.qrc"/>
  </resources>
  <connections>
   <connection>

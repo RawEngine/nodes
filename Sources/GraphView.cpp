@@ -1,7 +1,7 @@
 
 #include "PCH.hpp"
 
-#include "GraphView.hpp"
+#include "Headers/GraphView.hpp"
 
 GraphView::GraphView(QWidget* pParent)
     : QGraphicsView(pParent)

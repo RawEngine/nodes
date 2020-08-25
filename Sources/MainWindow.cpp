@@ -3,12 +3,12 @@
 
 #include <QMainWindow>
 
-#include "MainWindow.hpp"
-#include "NodeDialog.hpp"
+#include "Headers/MainWindow.hpp"
+#include "Headers/NodeDialog.hpp"
 
-#include "GraphNode.hpp"
-#include "GraphNodeSlot.hpp" // TEMP?
-#include "GraphGizmo.hpp"   // TEMP?
+#include "Headers/GraphNode.hpp"
+#include "Headers/GraphNodeSlot.hpp" // TEMP?
+#include "Headers/GraphGizmo.hpp"   // TEMP?
 
 // TEMP?
 #include <QJsonDocument>

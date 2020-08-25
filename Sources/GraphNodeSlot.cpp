@@ -1,8 +1,8 @@
 
 #include "PCH.hpp"
 
-#include "GraphNode.hpp"
-#include "GraphNodeSlot.hpp"
+#include "Headers/GraphNode.hpp"
+#include "Headers/GraphNodeSlot.hpp"
 
 GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Type type, int index)
     : QGraphicsItem()

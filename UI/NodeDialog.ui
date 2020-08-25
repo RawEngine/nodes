@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>371</width>
-    <height>161</height>
+    <height>169</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Create new node</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="Resources.qrc">
+   <iconset resource="../Resources/Resources.qrc">
     <normaloff>:/nodes/NodesIcon</normaloff>:/nodes/NodesIcon</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -85,7 +85,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="Resources.qrc"/>
+  <include location="../Resources/Resources.qrc"/>
  </resources>
  <connections>
   <connection>

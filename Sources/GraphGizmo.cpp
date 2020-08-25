@@ -1,8 +1,8 @@
 
 #include "PCH.hpp"
 
-#include "GraphGizmo.hpp"
-#include "GraphNodeSlot.hpp"
+#include "Headers/GraphGizmo.hpp"
+#include "Headers/GraphNodeSlot.hpp"
 
 GraphGizmo::GraphGizmo(GraphNodeSlot* pPortOut, GraphNodeSlot* pPortIn)
     : QGraphicsItem()

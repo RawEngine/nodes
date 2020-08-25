@@ -1,7 +1,7 @@
 
 #include "PCH.hpp"
 
-#include "NodeDialog.hpp"
+#include "Headers/NodeDialog.hpp"
 
 NodeDialog::NodeDialog()
     : QDialog()

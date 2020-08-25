@@ -28,27 +28,26 @@ CONFIG += c++11
 PRECOMPILED_HEADER = PCH.hpp
 
 SOURCES += \
-    GraphGizmo.cpp \
-    GraphView.cpp \
-    NodeDialog.cpp \
-		PCH.hpp \
-        GraphNode.cpp \
-        GraphNodeSlot.cpp \
-        Main.cpp \
-        MainWindow.cpp
+    Sources/GraphGizmo.cpp \
+    Sources/GraphView.cpp \
+    Sources/NodeDialog.cpp \		
+    Sources/GraphNode.cpp \
+	Sources/GraphNodeSlot.cpp \
+    Sources/Main.cpp \
+	Sources/MainWindow.cpp
 
 HEADERS += \
-        GraphGizmo.hpp \
-        GraphNode.hpp \
-        GraphNodeSlot.hpp \
-        GraphView.hpp \
-        MainWindow.hpp \
-        NodeDialog.hpp \
-        PCH.hpp
+    Headers/GraphGizmo.hpp \
+	Headers/GraphNode.hpp \
+	Headers/GraphNodeSlot.hpp \
+	Headers/GraphView.hpp \
+	Headers/MainWindow.hpp \
+	Headers/NodeDialog.hpp \
+    PCH.hpp
 
 FORMS += \
-        MainWindow.ui \
-        NodeDialog.ui
+	UI/MainWindow.ui \
+	UI/NodeDialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -56,4 +55,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    Resources.qrc
+    Resources/Resources.qrc
