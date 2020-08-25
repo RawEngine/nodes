@@ -20,11 +20,11 @@ protected:
 
 private:
 
-    static constexpr QColor BackgroundColor = QColor(30, 30, 30);
-    static constexpr QColor BorderColorDefault = QColor(9, 9, 9);
-    static constexpr QColor BorderColorSelected = QColor(39, 214, 45);
+    static constexpr auto BackgroundColor = QColor(30, 30, 30);
+    static constexpr auto BorderColorDefault = QColor(9, 9, 9);
+    static constexpr auto BorderColorSelected = QColor(39, 214, 45);
 
-    const QString& mName;
+    const QString mName;
 
 
     bool mIsSelected = false;

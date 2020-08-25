@@ -36,12 +36,6 @@ void GraphNode::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOptio
 {
     QRectF rect(this->boundingRect());
 
-    QBrush brush(Qt::white);
-
-    // Draw the background.
-//    pPainter->setBrush(brush);
-//    pPainter->fillRoundedRect(rect, brush, 4, 4);
-
     QPainterPath path;
     path.addRoundedRect(rect, 4, 4);
 
@@ -52,12 +46,10 @@ void GraphNode::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOptio
     pPainter->drawPath(path);
 
 
-    // Draw the border.
-//    pPainter->setPen(mIsSelected ? Qt::red : Qt::green);
-//    pPainter->drawRoundedRect(rect, 4, 4);
-
-//    pPainter->setPen(QPen(Qt::gray));
- //   pPainter->drawText(QRectF(1, 1, 2, 2), "Woop");
+    // Draw the header text.
+    pPainter->setPen(Qt::white);
+    pPainter->setFont(QFont("Verdana", 12, QFont::Bold));
+    pPainter->drawText(rect, Qt::AlignCenter, mName);
 }
 
 void GraphNode::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
