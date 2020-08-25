@@ -12,6 +12,7 @@ public:
 
     const QString& GetName() const { return mName; }
 
+
 protected:
 
     void paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget = nullptr) override;
@@ -29,6 +30,8 @@ private:
     const QString mName;
 
     QGraphicsDropShadowEffect mShadowEffect;
+
+public: // TEMP!
 
     QVector<GraphNodeSlot*> mInputSlots;
 };

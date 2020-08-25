@@ -5,6 +5,8 @@
 
 #include "MainWindow.hpp"
 #include "GraphNode.hpp"
+#include "GraphNodeSlot.hpp" // TEMP?
+#include "GraphGizmo.hpp"   // TEMP?
 
 // TEMP?
 #include <QJsonDocument>
@@ -31,8 +33,15 @@ MainWindow::MainWindow()
     // Else, create the "default/initial" scene.
     if (!this->ReadConfigs(isMaximized))
     {
-        this->AddNode("Test A", QPointF(-200, -200));
-        this->AddNode("Test B", QPointF(100, 150));
+        auto pNodeA = this->AddNode("Test A", QPointF(-200, -200));
+        auto pNodeB = this->AddNode("Test B", QPointF(100, 150));
+
+        // TEMP.
+        auto pNodeSlotA = pNodeA->mInputSlots.at(0);
+        auto pNodeSlotB = pNodeB->mInputSlots.at(1);
+
+        auto pTestGizmo = new GraphGizmo(pNodeSlotA, pNodeSlotB);
+        mpScene->addItem(pTestGizmo);
     }
 
     // Show the main window maximized (or not) depending on saved configurations.
@@ -44,9 +53,13 @@ MainWindow::~MainWindow()
     this->WriteConfigs();
 }
 
-void MainWindow::AddNode(const QString& rName, const QPointF& rPosition)
+GraphNode* MainWindow::AddNode(const QString& rName, const QPointF& rPosition)
 {
-    mGraphNodes.append(new GraphNode(*mpScene, rName, rPosition));
+    auto pNode = new GraphNode(*mpScene, rName, rPosition);
+
+    mGraphNodes.append(pNode);
+
+    return pNode;
 }
 
 bool MainWindow::ReadConfigs(bool& rIsMaximized)

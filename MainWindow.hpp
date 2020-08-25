@@ -12,7 +12,7 @@ public:
     MainWindow();
     ~MainWindow();
 
-    void AddNode(const QString& rName, const QPointF& rPosition);
+    GraphNode* AddNode(const QString& rName, const QPointF& rPosition);
 
 private:
 
