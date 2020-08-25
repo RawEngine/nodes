@@ -38,13 +38,26 @@ void GraphNode::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOptio
 
     QBrush brush(Qt::white);
 
-    pPainter->setBrush(brush);
-    pPainter->fillRect(rect, brush);
+    // Draw the background.
+//    pPainter->setBrush(brush);
+//    pPainter->fillRoundedRect(rect, brush, 4, 4);
+
+    QPainterPath path;
+    path.addRoundedRect(rect, 4, 4);
+
+    QPen pen(mIsSelected ? GraphNode::BorderColorSelected : GraphNode::BorderColorDefault, 1);
+    pPainter->setPen(pen);
+
+    pPainter->fillPath(path, GraphNode::BackgroundColor);
+    pPainter->drawPath(path);
+
 
     // Draw the border.
-    pPainter->setPen(mIsSelected ? Qt::red : Qt::green);
-    pPainter->drawRect(rect);
+//    pPainter->setPen(mIsSelected ? Qt::red : Qt::green);
+//    pPainter->drawRoundedRect(rect, 4, 4);
 
+//    pPainter->setPen(QPen(Qt::gray));
+ //   pPainter->drawText(QRectF(1, 1, 2, 2), "Woop");
 }
 
 void GraphNode::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)

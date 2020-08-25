@@ -14,10 +14,12 @@ MainWindow::MainWindow()
 
     mUI.graphicsView->setScene(mpScene);
     mUI.graphicsView->setRenderHints(QPainter::Antialiasing);
+ //   mUI.graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
     // TEST.
     auto pGraphNode = new GraphNode(*mpScene, "Test");
 
+ //   pGraphNode->
 }
 
 MainWindow::~MainWindow()

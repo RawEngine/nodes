@@ -28,6 +28,7 @@ CONFIG += c++11
 PRECOMPILED_HEADER = PCH.hpp
 
 SOURCES += \
+    GraphView.cpp \
 		PCH.hpp \
         GraphNode.cpp \
         GraphNodeSlot.cpp \
@@ -37,6 +38,7 @@ SOURCES += \
 HEADERS += \
         GraphNode.hpp \
         GraphNodeSlot.hpp \
+        GraphView.hpp \
         MainWindow.hpp \
         PCH.hpp
 
