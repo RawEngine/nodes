@@ -14,6 +14,7 @@ GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType,
     , mIOType(ioType)
     , mIndex(index)
     , mIsGhost(isGhost)
+    , mColor(dataType == GraphPortDataType::Integer ? Qt::green : Qt::blue)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
 
@@ -69,7 +70,7 @@ QRectF GraphNodeSlot::boundingRect() const
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /* = nullptr */)
 {
 //  pPainter->setPen(Qt::black); // Looks prettier without the border?
-    pPainter->setBrush(mDataType == GraphPortDataType::Integer ? Qt::green : Qt::red);
+    pPainter->setBrush(mColor);
     pPainter->drawEllipse(this->boundingRect());
 
     if (this->IsClosest)
@@ -83,12 +84,15 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mouseMoveEvent(pEvent);
 
+    // When the "port" is moved - we will actually move the original "port".
+    // But in it's place we will create a temporary "ghost" port.
+    // This "ghost" port will be removed once the "mouse released" event is received.
     if (!mIsGhost && !mpGhostPort)
     {
         const auto deltaX = pEvent->pos().x() - mMousePressedPos.x();
         const auto deltaY = pEvent->pos().y() - mMousePressedPos.y();
 
-        if (!mpGhostPort && (deltaX > 0 || deltaY > 0))
+        if (deltaX > 0 || deltaY > 0)
         {
             mpGhostPort = new GraphNodeSlot(mParentNode, mDataType, mIOType, mIndex, true);
             QGraphicsItem::scene()->addItem(mpGhostPort);
@@ -98,16 +102,22 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
         }
     }
 
-#if 0
     auto pClosestPort = this->FindClosestPort();
     if (!pClosestPort)
         return;
 
-    // TODO
-    pClosestPort->IsClosest = true;
+    // Check if ports are compatible.
+    if (pClosestPort->GetDataType() != mDataType)
+    {
+        mpGhostGizmo->UpdateColor(Qt::red);
+    }
+    else
+        mpGhostGizmo->UpdateColor(mColor);
 
-    this->ConnectToPort(pClosestPort);
-#endif
+    // TODO
+//    pClosestPort->IsClosest = true;
+
+//    this->ConnectToPort(pClosestPort);
 }
 
 void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
@@ -115,10 +125,6 @@ void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
     QGraphicsItem::mousePressEvent(pEvent);
 
     mMousePressedPos = pEvent->pos();
-
-    qDebug() << "--- GraphNodeSlot::mousePressEvent[" << mMousePressedPos << "] ---";
-
-
 }
 
 void GraphNodeSlot::mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent)
@@ -148,6 +154,9 @@ GraphNodeSlot* GraphNodeSlot::FindClosestPort()
 
     // Returns a list of all items that collide with this item.
     auto collidingItems = QGraphicsItem::scene()->collidingItems(this);
+
+    qDebug() << "Num collisions: " << collidingItems.size();
+
     if (!collidingItems.isEmpty())
     {
         for (auto pItem : collidingItems)

@@ -8,6 +8,8 @@ class GraphGizmo final : public QGraphicsItem
 public:
     GraphGizmo(GraphNodeSlot* pPortOut, GraphNodeSlot* pPortIn);
 
+    void UpdateColor(const QColor& rColor);
+
     QRectF boundingRect() const override;
 
 protected:
@@ -16,6 +18,7 @@ protected:
 
 private:
 
+    QColor mColor;
     GraphNodeSlot* mPortOut;
     GraphNodeSlot* mPortIn;
 };

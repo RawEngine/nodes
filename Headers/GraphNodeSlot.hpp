@@ -34,7 +34,8 @@ public:
     // TEMP.
     bool IsClosest = false;
 
-    auto GetDataType() const { return mDataType; }
+    auto GetDataType() const    { return mDataType; }
+    auto GetColor() const       { return mColor;    }
 
 protected:
 
@@ -59,6 +60,7 @@ private:
     const IOType            mIOType;
     const int               mIndex;
     const bool              mIsGhost;
+    const QColor            mColor;
     QVector<GraphGizmo*>    mGizmos;
 
     QPointF mMousePressedPos;

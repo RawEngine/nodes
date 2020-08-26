@@ -6,9 +6,16 @@
 
 GraphGizmo::GraphGizmo(GraphNodeSlot* pPortOut, GraphNodeSlot* pPortIn)
     : QGraphicsItem()
+    , mColor(pPortOut->GetColor())
     , mPortOut(pPortOut)
     , mPortIn(pPortIn)
 { }
+
+void GraphGizmo::UpdateColor(const QColor& rColor)
+{
+    mColor = rColor;
+    QGraphicsItem::update();
+}
 
 QRectF GraphGizmo::boundingRect() const
 {
@@ -27,7 +34,7 @@ void GraphGizmo::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOpti
                 (posIn.x() + posOut.x()) / 2.0, posIn.y(),
                  posIn.x(), posIn.y());
 
-    pPainter->setPen(QPen(Qt::green, 3));
+    pPainter->setPen(QPen(mColor, 3));
     pPainter->drawPath(path);
 
 #if 1
