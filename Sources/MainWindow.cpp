@@ -24,8 +24,7 @@ MainWindow::MainWindow()
     mUI.setupUi(this);
 
     mUI.graphicsView->setScene(mpScene);
-    mUI.graphicsView->setRenderHints(QPainter::Antialiasing);
-    mUI.graphicsView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    mUI.graphicsView->setSceneRect(0, 0, 4096, 4096);
 
     // Show main application window as "maximized" by default.
     bool isMaximized = true;

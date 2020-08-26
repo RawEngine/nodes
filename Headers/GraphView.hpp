@@ -14,12 +14,16 @@ protected:
     void drawBackground(QPainter* pPainter, const QRectF& rRect) override;
 
     void wheelEvent(QWheelEvent* pEvent) override;
+    void mouseMoveEvent(QMouseEvent* pEvent) override;
+    void mousePressEvent(QMouseEvent* pEvent) override;
+    void mouseReleaseEvent(QMouseEvent* pEvent) override;
 
 private:
 
     static const QColor BackgroundColor;
-    static const QColor GridMinorColor;
-    static const QColor GridMajorColor;
+    static const QColor GridColor;
+    static const int    GridScale;
 
-    int mGridScale = 64;
+    bool    mIsMouseDrag = false;
+    QPoint  mMouseDownPos;
 };

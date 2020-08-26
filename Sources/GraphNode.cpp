@@ -29,9 +29,10 @@ void GraphNode::AddInputPort(GraphPortDataType type)
 
     const int index = mInputPorts.size();
 
-    auto pItem = new GraphNodeSlot(*this, type, GraphNodeSlot::IOType::Input, index);
+    auto pItem = new GraphNodeSlot(this, type, GraphNodeSlot::IOType::Input, index);
 
-    QGraphicsItem::scene()->addItem(pItem);
+    // NOTE: No need, because "GraphNodeSlot" is a child of a GraphNode. (QGraphicsItem)
+//  QGraphicsItem::scene()->addItem(pItem);
 
     mInputPorts.append(pItem);
 }
@@ -42,9 +43,10 @@ void GraphNode::AddOutputPort(GraphPortDataType type)
 
     const int index = mOutputPorts.size();
 
-    auto pItem = new GraphNodeSlot(*this, type, GraphNodeSlot::IOType::Output, index);
+    auto pItem = new GraphNodeSlot(this, type, GraphNodeSlot::IOType::Output, index);
 
-    QGraphicsItem::scene()->addItem(pItem);
+    // NOTE: No need, because "GraphNodeSlot" is a child of a GraphNode. (QGraphicsItem)
+//  QGraphicsItem::scene()->addItem(pItem);
 
     mOutputPorts.append(pItem);
 }
