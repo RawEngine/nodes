@@ -5,12 +5,15 @@
 #include "Headers/GraphNodeSlot.hpp"
 #include "Headers/GraphGizmo.hpp"
 
-GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index)
+#include <QGraphicsSceneMouseEvent>
+
+GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index, bool isGhost /* = false */)
     : QGraphicsItem()
     , mParentNode(rParentNode)
     , mDataType(dataType)
     , mIOType(ioType)
     , mIndex(index)
+    , mIsGhost(isGhost)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
 
@@ -49,6 +52,7 @@ void GraphNodeSlot::UpdatePosition()
     qreal posX = mParentNode.pos().x();
     qreal posY = mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + gapDistance * mIndex;
 
+    // Inputs are located on the LEFT, outputs on the RIGHT side of the Node.
     if (mIOType == IOType::Input)
         posX += mParentNode.boundingRect().left();
     else
@@ -79,6 +83,22 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mouseMoveEvent(pEvent);
 
+    if (!mIsGhost && !mpGhostPort)
+    {
+        const auto deltaX = pEvent->pos().x() - mMousePressedPos.x();
+        const auto deltaY = pEvent->pos().y() - mMousePressedPos.y();
+
+        if (!mpGhostPort && (deltaX > 0 || deltaY > 0))
+        {
+            mpGhostPort = new GraphNodeSlot(mParentNode, mDataType, mIOType, mIndex, true);
+            QGraphicsItem::scene()->addItem(mpGhostPort);
+
+            mpGhostGizmo = new GraphGizmo(mpGhostPort, this);
+            QGraphicsItem::scene()->addItem(mpGhostGizmo);
+        }
+    }
+
+#if 0
     auto pClosestPort = this->FindClosestPort();
     if (!pClosestPort)
         return;
@@ -87,17 +107,37 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
     pClosestPort->IsClosest = true;
 
     this->ConnectToPort(pClosestPort);
+#endif
 }
 
 void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mousePressEvent(pEvent);
 
+    mMousePressedPos = pEvent->pos();
+
+    qDebug() << "--- GraphNodeSlot::mousePressEvent[" << mMousePressedPos << "] ---";
+
+
 }
 
 void GraphNodeSlot::mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mouseReleaseEvent(pEvent);
+
+    if (mpGhostGizmo)
+    {
+        QGraphicsItem::scene()->removeItem(mpGhostGizmo);
+        mpGhostGizmo = nullptr;
+    }
+
+    if (mpGhostPort)
+    {
+        // Re-set port back to the original position and remove the temporary "ghost" port.
+        QGraphicsItem::setPos(mpGhostPort->pos());
+        QGraphicsItem::scene()->removeItem(mpGhostPort);
+        mpGhostPort = nullptr;
+    }
 }
 
 GraphNodeSlot* GraphNodeSlot::FindClosestPort()
@@ -106,6 +146,7 @@ GraphNodeSlot* GraphNodeSlot::FindClosestPort()
 
     qreal closestDistance = 30.0;
 
+    // Returns a list of all items that collide with this item.
     auto collidingItems = QGraphicsItem::scene()->collidingItems(this);
     if (!collidingItems.isEmpty())
     {

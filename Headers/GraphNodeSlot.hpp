@@ -21,7 +21,7 @@ public:
         Output
     };
 
-    GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index);
+    GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index, bool isGhost = false);
 
     static GraphPortDataType DataTypeFromString(const QString& rStr);
 
@@ -58,5 +58,11 @@ private:
     const GraphPortDataType mDataType;
     const IOType            mIOType;
     const int               mIndex;
+    const bool              mIsGhost;
     QVector<GraphGizmo*>    mGizmos;
+
+    QPointF mMousePressedPos;
+
+    GraphNodeSlot*  mpGhostPort = nullptr;
+    GraphGizmo*     mpGhostGizmo = nullptr;
 };
