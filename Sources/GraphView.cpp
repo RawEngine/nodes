@@ -14,8 +14,7 @@ GraphView::GraphView(QWidget* pParent)
 {
     QGraphicsView::setRenderHints(QPainter::Antialiasing);
     QGraphicsView::setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
-    QGraphicsView::setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-//  QGraphicsView::setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+    QGraphicsView::setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 }
 
 void GraphView::drawBackground(QPainter* pPainter, const QRectF& rRect)

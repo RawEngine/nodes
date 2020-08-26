@@ -1,4 +1,6 @@
 
+#include "PCH.hpp"
+
 #include "Headers/MainWindow.hpp"
 
 #include <QApplication>

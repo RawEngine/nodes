@@ -7,12 +7,11 @@
 
 #include <QGraphicsSceneMouseEvent>
 
-GraphNodeSlot::GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index, bool isGhost /* = false */)
+GraphNodeSlot::GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index)
     : QGraphicsItem(pParentNode)
     , mDataType(dataType)
     , mIOType(ioType)
     , mIndex(index)
-    , mIsGhost(isGhost)
     , mColor(dataType == GraphPortDataType::Integer ? Qt::green : Qt::blue)
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
@@ -46,6 +45,9 @@ QString GraphNodeSlot::DataTypeToString() const
 
 void GraphNodeSlot::UpdatePosition()
 {
+    if (!QGraphicsItem::parentItem())
+        return; // Port is not attached to any parent (temporary/ghost).
+
     const int topDistance = 20;
     const int gapDistance = 20;
 
@@ -72,18 +74,30 @@ void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pO
 
 void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 {
+    qDebug() << "--- mouseMoveEvent ---";
 #if 1
+    if (!mpGhostPort)
+        return;
 
-    if (mIOType == IOType::Output)
+    mpGhostPort->setPos(QGraphicsItem::mapToScene(pEvent->pos()));
+    mpGhostGizmo->UpdateColor(mColor);
+
+    auto pClosestPort = this->FindClosestPort();
+    if (!pClosestPort)
+        return;
+
+    // Check if port is compatible.
+    // And allow only "input-to-outputs" or "outputs-to-inputs". 
+    // (No "inputs-to-inputs", "outputs-to-outputs")
+    if (pClosestPort->GetDataType() != mDataType || pClosestPort->GetIOType() == mIOType)
     {
-        mpNewLine->UpdatePointB(QGraphicsItem::mapToScene(pEvent->pos()));
+        mpGhostGizmo->UpdateColor(Qt::red);
+        return;
     }
-    else if (mIOType == IOType::Input)
-    {
-        qDebug() << "TODO mouseMoveEvent INPUT";
-    }
-    else
-        QGraphicsItem::mouseMoveEvent(pEvent);
+
+    mpClosestPort = pClosestPort;
+
+
 #else
  //   qDebug() << "--- GraphNodeSlot::mouseMoveEvent ---";
 
@@ -108,50 +122,12 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
             }
         }
     }
-
-    // If this is a "ghost" port, simply pass all the mouse move events.
-    if (mIsGhost)
-    {
-
-        qDebug() << "--- GraphNodeSlot::mouseMoveEvent GHOST ---";
-
-        QGraphicsItem::mouseMoveEvent(pEvent);
-
-        auto pClosestPort = this->FindClosestPort();
-        if (!pClosestPort)
-            return;
-
-        // Check if port is compatible.
-        // And allow only "input-to-outputs" or "outputs-to-inputs". 
-        // (No "inputs-to-inputs", "outputs-to-outputs")
-        if (pClosestPort->GetDataType() != mDataType ||
-            pClosestPort->GetIOType() == mIOType)
-        {
-            if (mpGhostGizmo)
-                mpGhostGizmo->UpdateColor(Qt::red);
-
-            return;
-        }
-        else
-            if (mpGhostGizmo)
-                mpGhostGizmo->UpdateColor(mColor);
-
-        mpClosestPort = pClosestPort;
-    }
-
-    // If we've just created the "ghost" port - forward all the mouse move events to it.
-    if (mpGhostPort)
-    {
-        mpGhostPort->mouseMoveEvent(pEvent);
-    }
-    else
-        QGraphicsItem::mouseMoveEvent(pEvent);
 #endif
 }
 
 void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
 {
-#if 1
+#if 0
     if (mIOType == IOType::Output)
     {
         const auto rect = this->boundingRect();
@@ -171,7 +147,30 @@ void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
     else
         QGraphicsItem::mousePressEvent(pEvent);
 #else
-    QGraphicsItem::mousePressEvent(pEvent);
+
+    if (mIOType == IOType::Input)
+    {
+        // Check if there is a need to perform a disconnect.
+        if (!mGizmosIn.isEmpty())
+        {
+            auto p = mGizmosIn.takeLast();
+            qDebug() << "PRICIUPOM!";
+        }
+    }
+    else if (mIOType == IOType::Output)
+    {
+    }
+    else
+        QGraphicsItem::mousePressEvent(pEvent);
+
+    // Add the temporary port item.
+    mpGhostPort = new GraphNodeSlot(nullptr, mDataType, mIOType, mIndex);
+    mpGhostPort->setPos(QGraphicsItem::mapToScene(pEvent->pos()));
+    QGraphicsItem::scene()->addItem(mpGhostPort);
+
+    // Add the temporary gizmo.
+    mpGhostGizmo = new GraphGizmo(this, mpGhostPort);
+    QGraphicsItem::scene()->addItem(mpGhostGizmo);
 /*
 
  //   qDebug() << "--- GraphNodeSlot::mousePressEvent ---";
@@ -192,7 +191,7 @@ void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
 
 void GraphNodeSlot::mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent)
 {
-#if 1
+#if 0
     qDebug() << "--- mouseReleaseEvent ---";
 
     // Check if we've hit the DST port.
@@ -216,19 +215,16 @@ void GraphNodeSlot::mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent)
 #else
     QGraphicsItem::mouseReleaseEvent(pEvent);
 
+    if (mpGhostPort)
+    {
+        QGraphicsItem::scene()->removeItem(mpGhostPort);
+        mpGhostPort = nullptr;
+    }
 
     if (mpGhostGizmo)
     {
         QGraphicsItem::scene()->removeItem(mpGhostGizmo);
         mpGhostGizmo = nullptr;
-    }
-
-    if (mpGhostPort)
-    {
-        // Re-set port back to the original position and remove the temporary "ghost" port.
-     //   QGraphicsItem::setPos(mpGhostPort->pos());
-        QGraphicsItem::scene()->removeItem(mpGhostPort);
-        mpGhostPort = nullptr;
     }
 
     // Connect to a valid & the closest port that was found.
@@ -246,8 +242,8 @@ GraphNodeSlot* GraphNodeSlot::FindClosestPort()
 
     qreal closestDistance = 30.0;
 
-    // Returns a list of all items that collide with this item.
-    auto collidingItems = QGraphicsItem::scene()->collidingItems(this);
+    // Returns a list of all items that collide with the "ghost" item.
+    auto collidingItems = QGraphicsItem::scene()->collidingItems(mpGhostPort);
 
     if (!collidingItems.isEmpty())
     {
@@ -258,11 +254,11 @@ GraphNodeSlot* GraphNodeSlot::FindClosestPort()
             // Using "dynamic_cast" to seek out the desired object and return it if possible. If it can't, it will return nullptr.
             auto pNodeSlot = dynamic_cast<GraphNodeSlot*>(pItem);
 
-            // Make sure the "ghost" object gets ignored too. 
-            if (!pNodeSlot || pNodeSlot == mpGhostPort)
+            // Make sure the "this" item object gets ignored too. 
+            if (!pNodeSlot || pNodeSlot == this)
                 continue;
 
-            qreal dist = (pNodeSlot->pos() - QGraphicsItem::pos()).manhattanLength();
+            qreal dist = (pNodeSlot->scenePos() - mpGhostPort->scenePos()).manhattanLength();
 
             if (dist < closestDistance)
             {

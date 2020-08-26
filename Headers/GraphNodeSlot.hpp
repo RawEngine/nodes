@@ -3,7 +3,6 @@
 
 // Forward declarations.
 class GraphNode;
-class GraphLine;
 class GraphGizmo;
 
 enum class GraphPortDataType
@@ -22,7 +21,7 @@ public:
         Output
     };
 
-    GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index, bool isGhost = false);
+    GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index);
 
     static GraphPortDataType DataTypeFromString(const QString& rStr);
 
@@ -59,17 +58,14 @@ private:
     const GraphPortDataType mDataType;
     const IOType            mIOType;
     const int               mIndex;
-    const bool              mIsGhost;
     const QColor            mColor;
 
     // A single src "port" might be connected to the multiple dst ports. 
  //   QVector<GraphNodeSlot*> mConnectedDstPorts;
     QVector<GraphNodeSlot*> mConnectedSrcPorts;
     
-    QVector<GraphLine*> mGizmosIn;
-    QVector<GraphLine*> mGizmosOut;
-    GraphLine* mpNewLine = nullptr;
-
+    QVector<GraphGizmo*> mGizmosIn;
+    QVector<GraphGizmo*> mGizmosOut;
 
     QPointF                 mMousePressedPos;
 
