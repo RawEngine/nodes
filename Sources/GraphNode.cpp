@@ -23,7 +23,7 @@ GraphNode::GraphNode(const QString& rName, const QPointF& rPosition)
     QGraphicsItem::setGraphicsEffect(&mShadowEffect);
 }
 
-void GraphNode::AddInputPort(GraphPortType type)
+void GraphNode::AddInputPort(GraphPortDataType type)
 {
     Q_ASSERT(QGraphicsItem::scene());
 
@@ -36,7 +36,7 @@ void GraphNode::AddInputPort(GraphPortType type)
     mInputPorts.append(pItem);
 }
 
-void GraphNode::AddOutputPort(GraphPortType type)
+void GraphNode::AddOutputPort(GraphPortDataType type)
 {
     Q_ASSERT(QGraphicsItem::scene());
 

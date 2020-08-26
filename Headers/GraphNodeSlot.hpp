@@ -5,11 +5,11 @@
 class GraphNode;
 class GraphGizmo;
 
-enum class GraphPortType
+enum class GraphPortDataType
 {
     Unknown,
     Integer,
-    Float
+    Float,
 };
 
 class GraphNodeSlot : public QGraphicsItem
@@ -21,9 +21,9 @@ public:
         Output
     };
 
-    GraphNodeSlot(GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index);
+    GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index);
 
-    static GraphPortType DataTypeFromString(const QString& rStr);
+    static GraphPortDataType DataTypeFromString(const QString& rStr);
 
     QString DataTypeToString() const;
 
@@ -52,13 +52,11 @@ private:
 
 private:
 
-    static constexpr auto NodePortSize = 20.0;
+    static constexpr auto   NodePortSize = 10.0;
 
-    GraphNode&          mParentNode;
-
-    const GraphPortType mDataType;
-    const IOType        mIOType;
-    const int           mIndex;
-
-    QVector<GraphGizmo*> mGizmos;
+    GraphNode&              mParentNode;
+    const GraphPortDataType mDataType;
+    const IOType            mIOType;
+    const int               mIndex;
+    QVector<GraphGizmo*>    mGizmos;
 };

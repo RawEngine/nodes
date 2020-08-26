@@ -2,7 +2,7 @@
 #pragma once
 
 // Forwward declarations.
-enum class GraphPortType;
+enum class GraphPortDataType;
 class GraphNodeSlot;
 
 class GraphNode : public QGraphicsItem
@@ -10,8 +10,8 @@ class GraphNode : public QGraphicsItem
 public:
     GraphNode(const QString& rName, const QPointF& rPosition);
 
-    void AddInputPort(GraphPortType type);
-    void AddOutputPort(GraphPortType type);
+    void AddInputPort(GraphPortDataType type);
+    void AddOutputPort(GraphPortDataType type);
 
     QRectF boundingRect() const override;
 

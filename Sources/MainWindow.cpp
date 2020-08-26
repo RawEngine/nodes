@@ -40,20 +40,20 @@ MainWindow::MainWindow()
 
         // TEMP.
         {
-            pNodeA->AddInputPort(GraphPortType::Integer);
-            pNodeA->AddInputPort(GraphPortType::Float);
-            pNodeA->AddInputPort(GraphPortType::Integer);
+            pNodeA->AddInputPort(GraphPortDataType::Integer);
+            pNodeA->AddInputPort(GraphPortDataType::Float);
+            pNodeA->AddInputPort(GraphPortDataType::Integer);
 
-            pNodeA->AddOutputPort(GraphPortType::Float);
-            pNodeA->AddOutputPort(GraphPortType::Integer);
+            pNodeA->AddOutputPort(GraphPortDataType::Float);
+            pNodeA->AddOutputPort(GraphPortDataType::Integer);
         }
         {
-            pNodeB->AddInputPort(GraphPortType::Integer);
-            pNodeB->AddInputPort(GraphPortType::Float);
-            pNodeB->AddInputPort(GraphPortType::Integer);
+            pNodeB->AddInputPort(GraphPortDataType::Integer);
+            pNodeB->AddInputPort(GraphPortDataType::Float);
+            pNodeB->AddInputPort(GraphPortDataType::Integer);
 
-            pNodeB->AddOutputPort(GraphPortType::Float);
-            pNodeB->AddOutputPort(GraphPortType::Integer);
+            pNodeB->AddOutputPort(GraphPortDataType::Float);
+            pNodeB->AddOutputPort(GraphPortDataType::Integer);
         }
 /*
         // TEMP.
@@ -126,11 +126,11 @@ bool MainWindow::ReadConfigs(bool& rIsMaximized)
         // Read Inputs.
         if (!jsonNodeObject["inputs"].isUndefined())
         {
-            const auto jsonInputsArray(jsonNodeObject["inputs"].toArray());
+            const auto jsonArray(jsonNodeObject["inputs"].toArray());
 
-            for (const auto& rJsonInput : jsonInputsArray)
+            for (const auto& rJsonValue : jsonArray)
             {
-                const auto jsonInputObject(rJsonInput.toObject());
+                const auto jsonInputObject(rJsonValue.toObject());
 
                 if (!jsonInputObject["data_type"].isUndefined())
                 {
@@ -142,7 +142,22 @@ bool MainWindow::ReadConfigs(bool& rIsMaximized)
         }
 
         // Read Outputs.
-        // TODO
+        if (!jsonNodeObject["outputs"].isUndefined())
+        {
+            const auto jsonArray(jsonNodeObject["outputs"].toArray());
+
+            for (const auto& rJsonValue : jsonArray)
+            {
+                const auto jsonOutputObject(rJsonValue.toObject());
+
+                if (!jsonOutputObject["data_type"].isUndefined())
+                {
+                    const auto dataTypeStr(jsonOutputObject["data_type"].toString());
+
+                    pNode->AddOutputPort(GraphNodeSlot::DataTypeFromString(dataTypeStr));
+                }
+            }
+        }
     }
 
     return true;
@@ -223,5 +238,27 @@ void MainWindow::Slot_BtnAddNode()
         int numOutputs = dialog.GetNumOutputs();
 
         auto pNode = this->AddNode(dialog.GetNodeName(), QPointF(0.0, 0.0));
+
+        if (numInputs > 0)
+        {
+            for (int i = 0; i < numInputs; ++i)
+            {
+                // Just a quick and dirty way to add some variety for the port data types... 
+                auto dataType = (i % 2) ? GraphPortDataType::Integer : GraphPortDataType::Float;
+
+                pNode->AddInputPort(dataType);
+            }
+        }
+
+        if (numOutputs > 0)
+        {
+            for (int i = 0; i < numOutputs; ++i)
+            {
+                // Just a quick and dirty way to add some variety for the port data types... 
+                auto dataType = (i % 2) ? GraphPortDataType::Integer : GraphPortDataType::Float;
+
+                pNode->AddOutputPort(dataType);
+            }
+        }
     }
 }

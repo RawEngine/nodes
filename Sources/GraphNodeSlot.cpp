@@ -5,7 +5,7 @@
 #include "Headers/GraphNodeSlot.hpp"
 #include "Headers/GraphGizmo.hpp"
 
-GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index)
+GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortDataType dataType, IOType ioType, int index)
     : QGraphicsItem()
     , mParentNode(rParentNode)
     , mDataType(dataType)
@@ -17,23 +17,23 @@ GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortType dataType, IOT
     this->UpdatePosition();
 }
 
-GraphPortType GraphNodeSlot::DataTypeFromString(const QString& rStr)
+GraphPortDataType GraphNodeSlot::DataTypeFromString(const QString& rStr)
 {
     if (rStr.isEmpty())
-        return GraphPortType::Unknown;
+        return GraphPortDataType::Unknown;
 
-         if (rStr.front() == 'I') return GraphPortType::Integer;
-    else if (rStr.front() == 'F') return GraphPortType::Float;
+         if (rStr.front() == 'I') return GraphPortDataType::Integer;
+    else if (rStr.front() == 'F') return GraphPortDataType::Float;
 
-    return GraphPortType::Unknown;
+    return GraphPortDataType::Unknown;
 }
 
 QString GraphNodeSlot::DataTypeToString() const
 {
     switch (mDataType)
     {
-    case GraphPortType::Integer:    return "I";
-    case GraphPortType::Float:      return "F";
+    case GraphPortDataType::Integer:    return "I";
+    case GraphPortDataType::Float:      return "F";
     default:
         break;
     }
@@ -65,7 +65,7 @@ QRectF GraphNodeSlot::boundingRect() const
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /* = nullptr */)
 {
 //  pPainter->setPen(Qt::black); // Looks prettier without the border?
-    pPainter->setBrush(mDataType == GraphPortType::Integer ? Qt::green : Qt::red);
+    pPainter->setBrush(mDataType == GraphPortDataType::Integer ? Qt::green : Qt::red);
     pPainter->drawEllipse(this->boundingRect());
 
     if (this->IsClosest)
