@@ -4,13 +4,14 @@
 #include "Headers/GraphNode.hpp"
 #include "Headers/GraphNodeSlot.hpp"
 
-GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition)
+const QColor GraphNode::BackgroundColor = QColor(30, 30, 30);
+const QColor GraphNode::BorderColorDefault = QColor(9, 9, 9);
+const QColor GraphNode::BorderColorSelected = QColor(39, 214, 45);
+
+GraphNode::GraphNode(const QString& rName, const QPointF& rPosition)
     : QGraphicsItem()
-    , mScene(rScene)
     , mName(rName)
 {
-    rScene.addItem(this);
-
     QGraphicsItem::setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
     QGraphicsItem::setPos(rPosition);
 
@@ -20,28 +21,32 @@ GraphNode::GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF
     mShadowEffect.setYOffset(6.0);
 
     QGraphicsItem::setGraphicsEffect(&mShadowEffect);
-
-    // TEMP.
-    this->AddInputPort(GraphPortType::Integer);
-    this->AddInputPort(GraphPortType::Float);
-    this->AddInputPort(GraphPortType::Integer);
-
-    this->AddOutputPort(GraphPortType::Float);
-    this->AddOutputPort(GraphPortType::Integer);
 }
 
 void GraphNode::AddInputPort(GraphPortType type)
 {
+    Q_ASSERT(QGraphicsItem::scene());
+
     const int index = mInputPorts.size();
 
-    mInputPorts.append(new GraphNodeSlot(mScene, *this, type, GraphNodeSlot::IOType::Input, index));
+    auto pItem = new GraphNodeSlot(*this, type, GraphNodeSlot::IOType::Input, index);
+
+    QGraphicsItem::scene()->addItem(pItem);
+
+    mInputPorts.append(pItem);
 }
 
 void GraphNode::AddOutputPort(GraphPortType type)
 {
+    Q_ASSERT(QGraphicsItem::scene());
+
     const int index = mOutputPorts.size();
 
-    mOutputPorts.append(new GraphNodeSlot(mScene, *this, type, GraphNodeSlot::IOType::Output, index));
+    auto pItem = new GraphNodeSlot(*this, type, GraphNodeSlot::IOType::Output, index);
+
+    QGraphicsItem::scene()->addItem(pItem);
+
+    mOutputPorts.append(pItem);
 }
 
 QRectF GraphNode::boundingRect() const

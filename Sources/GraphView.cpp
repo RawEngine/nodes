@@ -3,6 +3,10 @@
 
 #include "Headers/GraphView.hpp"
 
+const QColor GraphView::BackgroundColor = QColor(40, 40, 40);
+const QColor GraphView::GridMinorColor = QColor(48, 48, 48);
+const QColor GraphView::GridMajorColor = QColor(50, 50, 50);
+
 GraphView::GraphView(QWidget* pParent)
     : QGraphicsView(pParent)
 { }

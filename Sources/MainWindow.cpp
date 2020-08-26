@@ -34,15 +34,36 @@ MainWindow::MainWindow()
     // Else, create the "default/initial" scene.
     if (!this->ReadConfigs(isMaximized))
     {
+#if 1
         auto pNodeA = this->AddNode("Test A", QPointF(-200, -200));
         auto pNodeB = this->AddNode("Test B", QPointF(100, 150));
 
+        // TEMP.
+        {
+            pNodeA->AddInputPort(GraphPortType::Integer);
+            pNodeA->AddInputPort(GraphPortType::Float);
+            pNodeA->AddInputPort(GraphPortType::Integer);
+
+            pNodeA->AddOutputPort(GraphPortType::Float);
+            pNodeA->AddOutputPort(GraphPortType::Integer);
+        }
+        {
+            pNodeB->AddInputPort(GraphPortType::Integer);
+            pNodeB->AddInputPort(GraphPortType::Float);
+            pNodeB->AddInputPort(GraphPortType::Integer);
+
+            pNodeB->AddOutputPort(GraphPortType::Float);
+            pNodeB->AddOutputPort(GraphPortType::Integer);
+        }
+/*
         // TEMP.
         auto pNodeSlotA = pNodeA->mInputPorts.at(0);
         auto pNodeSlotB = pNodeB->mInputPorts.at(1);
 
         auto pTestGizmo = new GraphGizmo(pNodeSlotA, pNodeSlotB);
         mpScene->addItem(pTestGizmo);
+*/
+#endif
     }
 
     // Show the main window maximized (or not) depending on saved configurations.
@@ -56,7 +77,9 @@ MainWindow::~MainWindow()
 
 GraphNode* MainWindow::AddNode(const QString& rName, const QPointF& rPosition)
 {
-    auto pNode = new GraphNode(*mpScene, rName, rPosition);
+    auto pNode = new GraphNode(rName, rPosition);
+
+    mpScene->addItem(pNode);
 
     mGraphNodes.append(pNode);
 
@@ -79,26 +102,47 @@ bool MainWindow::ReadConfigs(bool& rIsMaximized)
     if (!jsonScene["maximized"].isUndefined())
         rIsMaximized = jsonScene["maximized"].toBool();
 
-    QJsonArray jsonNodes = jsonScene["nodes"].toArray();
+    const auto jsonNodesArrays(jsonScene["nodes"].toArray());
 
-    for (const auto& rJsonNode : jsonNodes)
+    for (const auto& rJsonNode : jsonNodesArrays)
     {
-        const auto& rJsonNodeObject = rJsonNode.toObject();
+        const auto jsonNodeObject(rJsonNode.toObject());
 
         QString nodeName;
         QPointF nodePosition;
 
-        if (!rJsonNodeObject["name"].isUndefined())
-            nodeName = rJsonNodeObject["name"].toString();
+        if (!jsonNodeObject["name"].isUndefined())
+            nodeName = jsonNodeObject["name"].toString();
 
-        if (!rJsonNodeObject["position"].isUndefined())
+        if (!jsonNodeObject["position"].isUndefined())
         {
-            const auto list(rJsonNodeObject["position"].toString().split(", "));
+            const auto list(jsonNodeObject["position"].toString().split(", "));
             nodePosition.setX(list.at(0).toDouble());
             nodePosition.setY(list.at(1).toDouble());
         }
 
-        this->AddNode(nodeName, nodePosition);
+        auto pNode = this->AddNode(nodeName, nodePosition);
+
+        // Read Inputs.
+        if (!jsonNodeObject["inputs"].isUndefined())
+        {
+            const auto jsonInputsArray(jsonNodeObject["inputs"].toArray());
+
+            for (const auto& rJsonInput : jsonInputsArray)
+            {
+                const auto jsonInputObject(rJsonInput.toObject());
+
+                if (!jsonInputObject["data_type"].isUndefined())
+                {
+                    const auto dataTypeStr(jsonInputObject["data_type"].toString());
+
+                    pNode->AddInputPort(GraphNodeSlot::DataTypeFromString(dataTypeStr));
+                }
+            }
+        }
+
+        // Read Outputs.
+        // TODO
     }
 
     return true;
@@ -125,6 +169,36 @@ void MainWindow::WriteConfigs()
                     jsonNode["name"] = pNode->GetName();
 
                 jsonNode["position"] = QString("%1, %2").arg(pNode->pos().x()).arg(pNode->pos().y());
+
+                // Write input ports.
+                if (pNode->IsUsingInputs())
+                {
+                    QJsonArray jsonPorts;
+
+                    for (const auto p : pNode->GetInputs())
+                    {
+                        QJsonObject jsonPort;
+                        jsonPort["data_type"] = p->DataTypeToString();
+                        jsonPorts.append(jsonPort);
+                    }
+                    
+                    jsonNode["inputs"] = jsonPorts;
+                }
+
+                // Write input ports.
+                if (pNode->IsUsingOutputs())
+                {
+                    QJsonArray jsonPorts;
+
+                    for (const auto p : pNode->GetInputs())
+                    {
+                        QJsonObject jsonPort;
+                        jsonPort["data_type"] = p->DataTypeToString();
+                        jsonPorts.append(jsonPort);
+                    }
+
+                    jsonNode["outputs"] = jsonPorts;
+                }
 
                 jsonNodes.append(jsonNode);
             }

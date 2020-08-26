@@ -8,15 +8,20 @@ class GraphNodeSlot;
 class GraphNode : public QGraphicsItem
 {
 public:
-    GraphNode(QGraphicsScene& rScene, const QString& rName, const QPointF& rPosition);
+    GraphNode(const QString& rName, const QPointF& rPosition);
 
     void AddInputPort(GraphPortType type);
     void AddOutputPort(GraphPortType type);
 
     QRectF boundingRect() const override;
 
-    const QString& GetName() const { return mName; }
+    QString GetName() const { return mName; }
 
+    bool IsUsingInputs() const { return !mInputPorts.isEmpty(); }
+    bool IsUsingOutputs() const { return !mOutputPorts.isEmpty(); }
+
+    const auto& GetInputs() const  { return mInputPorts;  }
+    const auto& GetOutputs() const { return mOutputPorts; }
 
 protected:
 
@@ -28,17 +33,13 @@ protected:
 
 private:
 
-    static constexpr auto BackgroundColor = QColor(30, 30, 30);
-    static constexpr auto BorderColorDefault = QColor(9, 9, 9);
-    static constexpr auto BorderColorSelected = QColor(39, 214, 45);
-
-    QGraphicsScene& mScene;
+    static const QColor BackgroundColor;
+    static const QColor BorderColorDefault;
+    static const QColor BorderColorSelected;
 
     const QString mName;
 
     QGraphicsDropShadowEffect mShadowEffect;
-
-public: // TEMP!
 
     QVector<GraphNodeSlot*> mInputPorts;
     QVector<GraphNodeSlot*> mOutputPorts;

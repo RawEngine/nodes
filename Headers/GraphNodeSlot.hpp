@@ -1,10 +1,13 @@
 
 #pragma once
 
+// Forward declarations.
 class GraphNode;
+class GraphGizmo;
 
 enum class GraphPortType
 {
+    Unknown,
     Integer,
     Float
 };
@@ -18,11 +21,20 @@ public:
         Output
     };
 
-    GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index);
+    GraphNodeSlot(GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index);
+
+    static GraphPortType DataTypeFromString(const QString& rStr);
+
+    QString DataTypeToString() const;
 
     void UpdatePosition();
 
     QRectF boundingRect() const override;
+
+    // TEMP.
+    bool IsClosest = false;
+
+    auto GetDataType() const { return mDataType; }
 
 protected:
 
@@ -34,9 +46,19 @@ protected:
 
 private:
 
+    GraphNodeSlot* FindClosestPort();
+
+    void ConnectToPort(GraphNodeSlot* pPort);
+
+private:
+
+    static constexpr auto NodePortSize = 20.0;
+
     GraphNode&          mParentNode;
 
     const GraphPortType mDataType;
     const IOType        mIOType;
     const int           mIndex;
+
+    QVector<GraphGizmo*> mGizmos;
 };

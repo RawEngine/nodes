@@ -3,8 +3,9 @@
 
 #include "Headers/GraphNode.hpp"
 #include "Headers/GraphNodeSlot.hpp"
+#include "Headers/GraphGizmo.hpp"
 
-GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index)
+GraphNodeSlot::GraphNodeSlot(GraphNode& rParentNode, GraphPortType dataType, IOType ioType, int index)
     : QGraphicsItem()
     , mParentNode(rParentNode)
     , mDataType(dataType)
@@ -13,18 +14,40 @@ GraphNodeSlot::GraphNodeSlot(QGraphicsScene& rScene, GraphNode& rParentNode, Gra
 {
     QGraphicsItem::setFlag(QGraphicsItem::ItemIsMovable);
 
-    rScene.addItem(this);
-
     this->UpdatePosition();
+}
+
+GraphPortType GraphNodeSlot::DataTypeFromString(const QString& rStr)
+{
+    if (rStr.isEmpty())
+        return GraphPortType::Unknown;
+
+         if (rStr.front() == 'I') return GraphPortType::Integer;
+    else if (rStr.front() == 'F') return GraphPortType::Float;
+
+    return GraphPortType::Unknown;
+}
+
+QString GraphNodeSlot::DataTypeToString() const
+{
+    switch (mDataType)
+    {
+    case GraphPortType::Integer:    return "I";
+    case GraphPortType::Float:      return "F";
+    default:
+        break;
+    }
+
+    return QString();
 }
 
 void GraphNodeSlot::UpdatePosition()
 {
     const int topDistance = 20;
-    const int dapDistance = 20;
+    const int gapDistance = 20;
 
     qreal posX = mParentNode.pos().x();
-    qreal posY = mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + (dapDistance * mIndex);
+    qreal posY = mParentNode.pos().y() + mParentNode.boundingRect().top() + topDistance + gapDistance * mIndex;
 
     if (mIOType == IOType::Input)
         posX += mParentNode.boundingRect().left();
@@ -36,7 +59,7 @@ void GraphNodeSlot::UpdatePosition()
 
 QRectF GraphNodeSlot::boundingRect() const
 {
-    return {-5.0, -5.0, 10.0, 10.0};
+    return {-(NodePortSize/2), -(NodePortSize/2), NodePortSize, NodePortSize};
 }
 
 void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /* = nullptr */)
@@ -44,25 +67,74 @@ void GraphNodeSlot::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pO
 //  pPainter->setPen(Qt::black); // Looks prettier without the border?
     pPainter->setBrush(mDataType == GraphPortType::Integer ? Qt::green : Qt::red);
     pPainter->drawEllipse(this->boundingRect());
+
+    if (this->IsClosest)
+    {
+        pPainter->setBrush(Qt::white);
+        pPainter->drawEllipse(this->boundingRect());
+    }
 }
 
 void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 {
     QGraphicsItem::mouseMoveEvent(pEvent);
+
+    auto pClosestPort = this->FindClosestPort();
+    if (!pClosestPort)
+        return;
+
+    // TODO
+    pClosestPort->IsClosest = true;
+
+    this->ConnectToPort(pClosestPort);
 }
 
 void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
 {
-//    mIsSelected = true;
-
     QGraphicsItem::mousePressEvent(pEvent);
-    QGraphicsItem::update();
+
 }
 
 void GraphNodeSlot::mouseReleaseEvent(QGraphicsSceneMouseEvent* pEvent)
 {
-//    mIsSelected = false;
-
     QGraphicsItem::mouseReleaseEvent(pEvent);
-    QGraphicsItem::update();
+}
+
+GraphNodeSlot* GraphNodeSlot::FindClosestPort()
+{
+    GraphNodeSlot* pClosestPort = nullptr;
+
+    qreal closestDistance = 30.0;
+
+    auto collidingItems = QGraphicsItem::scene()->collidingItems(this);
+    if (!collidingItems.isEmpty())
+    {
+        for (auto pItem : collidingItems)
+        {
+            auto pNodeSlot = reinterpret_cast<GraphNodeSlot*>(pItem);
+            if (!pNodeSlot)
+                continue;
+
+            qreal dist = (pNodeSlot->pos() - QGraphicsItem::pos()).manhattanLength();
+
+            if (dist < closestDistance)
+            {
+                closestDistance = dist;
+                pClosestPort = pNodeSlot;
+            }
+        }
+    }
+
+    return pClosestPort;
+}
+
+void GraphNodeSlot::ConnectToPort(GraphNodeSlot* pPort)
+{
+    // TODO: Check if port is compatible.
+
+    auto pGizmo = new GraphGizmo(this, pPort);
+
+    QGraphicsItem::scene()->addItem(pGizmo);
+
+    mGizmos.append(pGizmo);
 }

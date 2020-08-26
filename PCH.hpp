@@ -1,5 +1,5 @@
-#ifndef PCH_HPP
-#define PCH_HPP
+
+#pragma once
 
 #include <QDialog>
 
@@ -8,4 +8,4 @@
 #include <QGraphicsItem>
 #include <QGraphicsDropShadowEffect>
 
-#endif // PCH_HPP
+#include <QDebug>

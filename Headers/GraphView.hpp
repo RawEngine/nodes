@@ -17,9 +17,9 @@ protected:
 
 private:
 
-    static constexpr auto BackgroundColor = QColor(40, 40, 40);
-    static constexpr auto GridMinorColor = QColor(48, 48, 48);
-    static constexpr auto GridMajorColor = QColor(50, 50, 50);
+    static const QColor BackgroundColor;
+    static const QColor GridMinorColor;
+    static const QColor GridMajorColor;
 
     int mGridScale = 64;
 };

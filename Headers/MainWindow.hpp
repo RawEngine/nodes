@@ -27,7 +27,7 @@ private:
 
     Ui::MainWindow mUI;
 
-    QGraphicsScene* mpScene;
-
     QVector<GraphNode*> mGraphNodes;
+
+    QGraphicsScene* mpScene = nullptr;
 };
