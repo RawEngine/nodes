@@ -12,3 +12,6 @@
 
 5. You can zoom in/out scene using the mouse wheel.
 
+6. You can connect node's ports by pressing "Left mouse button" on the desired node port.
+
+7. You can disconnect (and or re-connect) node's ports by pressing "Right mouse button" on the desired node port.

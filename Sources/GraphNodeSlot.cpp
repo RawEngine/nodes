@@ -19,6 +19,31 @@ GraphNodeSlot::GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType,
     this->UpdatePosition();
 }
 
+void GraphNodeSlot::AddConnection(GraphNodeSlot* pDstPort)
+{
+    Q_ASSERT(pDstPort->IsDataType(mDataType));
+
+    if (!pDstPort->IsDataType(mDataType))
+        return; // Can't connect if data type is different.
+
+    auto pGizmo = new GraphGizmo(this, pDstPort);
+
+    QGraphicsItem::scene()->addItem(pGizmo);
+
+    if (pDstPort->IsIOType(IOType::Input))
+    {
+        mGizmosOut.append(pGizmo);
+
+        pDstPort->AddInputGizmo(pGizmo);
+    }
+    else if (pDstPort->IsIOType(IOType::Output))
+    {
+        mGizmosIn.append(pGizmo);
+
+        pDstPort->AddOutputGizmo(pGizmo);
+    }
+}
+
 void GraphNodeSlot::AddInputGizmo(GraphGizmo* pGizmo)
 {
     mGizmosIn.append(pGizmo);
@@ -111,16 +136,6 @@ void GraphNodeSlot::mouseMoveEvent(QGraphicsSceneMouseEvent* pEvent)
 #endif
 
     mpClosestPort = pClosestPort;
-}
-
-// Add the temporary (ghost) port item.
-// Will be used when attaching and dettaching gizmos to the ports.
-void GraphNodeSlot::CreateGhostPort(IOType inputType, const QPointF& rScenePos)
-{
-    mpGhostPort = new GraphNodeSlot(nullptr, mDataType, inputType, mIndex);
-    mpGhostPort->setPos(rScenePos);
-
-    QGraphicsItem::scene()->addItem(mpGhostPort);
 }
 
 void GraphNodeSlot::mousePressEvent(QGraphicsSceneMouseEvent* pEvent)
@@ -266,4 +281,14 @@ void GraphNodeSlot::ConnectToPort(GraphNodeSlot* pPort, GraphGizmo* pGizmo)
 
         pPort->AddOutputGizmo(pGizmo);
     }
+}
+
+// Add the temporary (ghost) port item.
+// Will be used when attaching and dettaching gizmos to the ports.
+void GraphNodeSlot::CreateGhostPort(IOType inputType, const QPointF& rScenePos)
+{
+    mpGhostPort = new GraphNodeSlot(nullptr, mDataType, inputType, mIndex);
+    mpGhostPort->setPos(rScenePos);
+
+    QGraphicsItem::scene()->addItem(mpGhostPort);
 }

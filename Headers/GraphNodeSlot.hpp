@@ -23,6 +23,8 @@ public:
 
     GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index);
 
+    void AddConnection(GraphNodeSlot* pDstPort);
+
     void AddInputGizmo(GraphGizmo* pGizmo);
     void AddOutputGizmo(GraphGizmo* pGizmo);
 
@@ -35,11 +37,16 @@ public:
     QRectF boundingRect() const override;
 
     bool IsIOType(IOType e) const { return mIOType == e; }
+    bool IsDataType(GraphPortDataType e) const { return mDataType == e; }
 
     auto GetDataType() const    { return mDataType; }
     auto GetIOType() const      { return mIOType;   }
     auto GetIndex() const       { return mIndex;    }
     auto GetColor() const       { return mColor;    }   
+
+ 
+    const auto& GetInputGizmos() const  { return mGizmosIn;  }
+    const auto& GetOutputGizmos() const { return mGizmosOut; }
 
 protected:
 
@@ -65,14 +72,8 @@ private:
     const int               mIndex;
     const QColor            mColor;
 
-    // A single src "port" might be connected to the multiple dst ports. 
- //   QVector<GraphNodeSlot*> mConnectedDstPorts;
-    QVector<GraphNodeSlot*> mConnectedSrcPorts;
-    
-    QVector<GraphGizmo*> mGizmosIn;
-    QVector<GraphGizmo*> mGizmosOut;
-
-    GraphNodeSlot* mpTempPort = nullptr;
+    QVector<GraphGizmo*>    mGizmosIn;
+    QVector<GraphGizmo*>    mGizmosOut;
 
     GraphNodeSlot*          mpClosestPort   = nullptr;
     GraphNodeSlot*          mpGhostPort     = nullptr; // A temporary "port" object that will be used while mouse dragging the port to the destination.

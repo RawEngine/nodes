@@ -34,34 +34,28 @@ MainWindow::MainWindow()
     if (!this->ReadConfigs(isMaximized))
     {
 #if 1
-        auto pNodeA = this->AddNode("Test A", QPointF(-200, -200));
-        auto pNodeB = this->AddNode("Test B", QPointF(100, 150));
+        auto pNodeA = this->AddNode("Test A", QPointF(100, 150));
+        auto pNodeB = this->AddNode("Test B", QPointF(450, 200));
 
         // TEMP.
-        {
-            pNodeA->AddInputPort(GraphPortDataType::Integer);
-            pNodeA->AddInputPort(GraphPortDataType::Float);
-            pNodeA->AddInputPort(GraphPortDataType::Integer);
+        auto pNodeAPortI1 = pNodeA->AddInputPort(GraphPortDataType::Integer);
+        auto pNodeAPortI2 = pNodeA->AddInputPort(GraphPortDataType::Float);
+        auto pNodeAPortI3 = pNodeA->AddInputPort(GraphPortDataType::Integer);
 
-            pNodeA->AddOutputPort(GraphPortDataType::Float);
-            pNodeA->AddOutputPort(GraphPortDataType::Integer);
-        }
-        {
-            pNodeB->AddInputPort(GraphPortDataType::Integer);
-            pNodeB->AddInputPort(GraphPortDataType::Float);
-            pNodeB->AddInputPort(GraphPortDataType::Integer);
+        auto pNodeAPortO1 = pNodeA->AddOutputPort(GraphPortDataType::Float);
+        auto pNodeAPortO2 = pNodeA->AddOutputPort(GraphPortDataType::Integer);
 
-            pNodeB->AddOutputPort(GraphPortDataType::Float);
-            pNodeB->AddOutputPort(GraphPortDataType::Integer);
-        }
-/*
-        // TEMP.
-        auto pNodeSlotA = pNodeA->mInputPorts.at(0);
-        auto pNodeSlotB = pNodeB->mInputPorts.at(1);
+        //----------------------------------------------------
 
-        auto pTestGizmo = new GraphGizmo(pNodeSlotA, pNodeSlotB);
-        mpScene->addItem(pTestGizmo);
-*/
+        auto pNodeBPortI1 = pNodeB->AddInputPort(GraphPortDataType::Integer);
+        auto pNodeBPortI2 = pNodeB->AddInputPort(GraphPortDataType::Float);
+        auto pNodeBPortI3 = pNodeB->AddInputPort(GraphPortDataType::Integer);
+
+        auto pNodeBPortO1 = pNodeB->AddOutputPort(GraphPortDataType::Float);
+        auto pNodeBPortO2 = pNodeB->AddOutputPort(GraphPortDataType::Integer);
+
+        pNodeAPortO1->AddConnection(pNodeBPortI2);
+        pNodeAPortO2->AddConnection(pNodeBPortI3);
 #endif
     }
 
@@ -193,6 +187,25 @@ void MainWindow::WriteConfigs()
                     {
                         QJsonObject jsonPort;
                         jsonPort["data_type"] = p->DataTypeToString();
+
+                        const auto inputGizmos(p->GetInputGizmos());
+
+                        qDebug() << "inputGizmos: " << inputGizmos.size();
+
+                        if (!inputGizmos.isEmpty())
+                        {
+/*
+                            QJsonArray jsonPortInputs;
+
+                            for (auto port : inputGizmos)
+                            {
+
+                            }
+
+                            jsonPort["ports"] = jsonPortInputs;
+*/
+                        }
+
                         jsonPorts.append(jsonPort);
                     }
                     
