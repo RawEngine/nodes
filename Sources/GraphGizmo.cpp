@@ -13,6 +13,11 @@ GraphGizmo::GraphGizmo(GraphNodeSlot* pFrom, GraphNodeSlot* pTo)
     QGraphicsItem::setZValue(-1); // Don't draw on top.
 }
 
+void GraphGizmo::SetDstPort(GraphNodeSlot* p)
+{
+    mpTo = p;
+}
+
 void GraphGizmo::UpdateColor(const QColor& rColor)
 {
     if (mColor == rColor)

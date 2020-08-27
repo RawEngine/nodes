@@ -23,6 +23,8 @@ public:
 
     GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index);
 
+    void AddInputGizmo(GraphGizmo* pGizmo);
+
     static GraphPortDataType DataTypeFromString(const QString& rStr);
 
     QString DataTypeToString() const;
@@ -35,7 +37,8 @@ public:
 
     auto GetDataType() const    { return mDataType; }
     auto GetIOType() const      { return mIOType;   }
-    auto GetColor() const       { return mColor;    }
+    auto GetIndex() const       { return mIndex;    }
+    auto GetColor() const       { return mColor;    }   
 
 protected:
 
@@ -50,6 +53,7 @@ private:
     GraphNodeSlot* FindClosestPort();
 
     void ConnectToPort(GraphNodeSlot* pDstPort);
+    void CreateGhostPort(IOType inputType, const QPointF& rScenePos);
 
 private:
 
@@ -66,8 +70,6 @@ private:
     
     QVector<GraphGizmo*> mGizmosIn;
     QVector<GraphGizmo*> mGizmosOut;
-
-    QPointF                 mMousePressedPos;
 
     GraphNodeSlot* mpTempPort = nullptr;
 

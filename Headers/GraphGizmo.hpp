@@ -8,6 +8,8 @@ class GraphGizmo final : public QGraphicsItem
 public:
     GraphGizmo(GraphNodeSlot* pFrom, GraphNodeSlot* pTo);
 
+    void SetDstPort(GraphNodeSlot* p);
+
     void UpdateColor(const QColor& rColor);
 
     QRectF boundingRect() const override;
