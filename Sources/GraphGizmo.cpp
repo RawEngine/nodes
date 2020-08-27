@@ -7,15 +7,10 @@
 GraphGizmo::GraphGizmo(GraphNodeSlot* pFrom, GraphNodeSlot* pTo)
     : QGraphicsItem()
     , mColor(pFrom->GetColor())
-    , mpFrom(pFrom)
-    , mpTo(pTo)
+    , PortSRC(pFrom)
+    , PortDST(pTo)
 {
     QGraphicsItem::setZValue(-1); // Don't draw on top.
-}
-
-void GraphGizmo::SetDstPort(GraphNodeSlot* p)
-{
-    mpTo = p;
 }
 
 void GraphGizmo::UpdateColor(const QColor& rColor)
@@ -29,13 +24,13 @@ void GraphGizmo::UpdateColor(const QColor& rColor)
 
 QRectF GraphGizmo::boundingRect() const
 {
-    return { mpFrom->scenePos(), mpTo->scenePos() };
+    return { this->PortSRC->scenePos(), this->PortDST->scenePos() };
 }
 
 void GraphGizmo::paint(QPainter* pPainter, const QStyleOptionGraphicsItem* pOption, QWidget* pWidget /*= nullptr*/)
 {
-    const auto& posFrom(mpFrom->scenePos());
-    const auto& posTo(mpTo->scenePos());
+    const auto& posFrom(this->PortSRC->scenePos());
+    const auto& posTo(this->PortDST->scenePos());
 
     QPainterPath path(posFrom);
 

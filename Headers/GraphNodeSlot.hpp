@@ -24,6 +24,7 @@ public:
     GraphNodeSlot(GraphNode* pParentNode, GraphPortDataType dataType, IOType ioType, int index);
 
     void AddInputGizmo(GraphGizmo* pGizmo);
+    void AddOutputGizmo(GraphGizmo* pGizmo);
 
     static GraphPortDataType DataTypeFromString(const QString& rStr);
 
@@ -52,7 +53,7 @@ private:
 
     GraphNodeSlot* FindClosestPort();
 
-    void ConnectToPort(GraphNodeSlot* pDstPort);
+    void ConnectToPort(GraphNodeSlot* pDstPort, GraphGizmo* pGizmo);
     void CreateGhostPort(IOType inputType, const QPointF& rScenePos);
 
 private:
